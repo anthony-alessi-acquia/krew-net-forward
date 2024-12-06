@@ -1,14 +1,14 @@
 # net-forward
 
 Simple plugin that lest you create a local port listener on your personal machine
-that redirects to an arbitrary TCP service that the Cluster can see. This is 
-similar to `kubectl port-forward` without the restriction that forwarding can 
-only use Pods or Services as destinations. 
+that redirects to an arbitrary TCP service that the Cluster can see. This is
+similar to `kubectl port-forward` without the restriction that forwarding can
+only use Pods or Services as destinations.
 
-This is intended to be flexible for people debugging network issues, testing 
-whether objects are able to communicate with eachother, and from a security 
-perspective, making it easier for pentesters to target other services on 
-adjacent subnets from the comfort of their own machine. 
+This is intended to be flexible for people debugging network issues, testing
+whether objects are able to communicate with eachother, and from a security
+perspective, making it easier for pentesters to target other services on
+adjacent subnets from the comfort of their own machine.
 
 ## Examples
 
@@ -32,11 +32,16 @@ Make a local forwarder inside the "testing" namespace and have it connect to an 
 
 `kubectl net-forward -n testing -i 10.23.10.3 -p 80`
 
+Use net-forward with a custom image:
+
+`kubectl net-forward --image alpine`
+- custom container images must have the socat package installed
+
 ## Details
 
-This works the same way as `port-forward`, when you run this, it will create a 
+This works the same way as `port-forward`, when you run this, it will create a
 Pod running the alpine:socat image and then configure it to redirect to the service
-of your choosing. 
+of your choosing.
 
 ## Future plans
 
@@ -50,15 +55,14 @@ of your choosing.
 **How is this different than port-forward**
 `kubectl port-forward` requires that you give it a Pod or service and a port. Like `kubectl port-forward Pod/my-app 9999`
 This restriction is useful when you're a cluster-admin but for security testing it's useful
-to make arbitrary connection to other services that you've discovered. 
+to make arbitrary connection to other services that you've discovered.
 
 **Why would you want to use this?**
 One example is the case where you wanted to verify whether the network controls you've setup
 properly prevent a Pod in a namespace from accessing the Pod of another namespace. Maybe you've
-configured a Network Policy that prevents Default/Pod/appA from accessing Secure/Pod/appB. 
+configured a Network Policy that prevents Default/Pod/appA from accessing Secure/Pod/appB.
 
 For security folks, this lets you proxy communications to any host in the cluster for a variety
-of things. I personnly like doing it because I have all of my favorite testing tools on my 
+of things. I personnly like doing it because I have all of my favorite testing tools on my
 laptop and now can just point it another service in the cluster without having to tool up a Pod
-or deploy a custom image. 
-
+or deploy a custom image.
